@@ -1,0 +1,47 @@
+---
+- name: Install packets to master node
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update and upgrade packets
+      apt:
+        upgrade: yes
+        update_cache: yes
+
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: latest
+   
+    
+    - name: Copy file with owner and permission, using symbolic representation
+      ansible.builtin.copy:
+        src: ./default
+        dest: /etc/nginx/sites-available/default
+    
+    # - name: Copy folder with website to web server
+    #   copy:
+    #     src: ./html
+    #     dest: /var/www/html
+    #     checksum: yes
+    - name:  Copy website from git
+      shell: 
+        cmd: |
+          cd /var/www/
+          rm -r html/   
+          git clone https://github.com/set1991/html.git
+          
+
+
+    - name: Restart nginx service
+      service:
+        name: nginx
+        state: restarted
+        enabled: yes        
+    
+          
+
+
+
+
+
