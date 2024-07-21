@@ -3,10 +3,10 @@ pipeline {
     triggers {
         pollSCM('* * * * *')
     }
-    environment {
+   /* environment {
         TF_PATH = 'terraform/*'  // Путь к Terraform файлам
         ANSIBLE_PATH = 'ansible_project/*'  // Путь к Ansible файлам
-        }
+        }*/
     stages {
         stage ('GIT clone') {
             agent { label 'master' }
