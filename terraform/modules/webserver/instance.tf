@@ -73,7 +73,20 @@ resource "local_file" "inventory_run_ansible" {
   [webservers]
   ${google_compute_instance.webserver.name}   ansible_host=${google_compute_instance.webserver.network_interface.0.access_config.0.nat_ip}
   EOF
+
+  provisioner "remote-exec" {
+    inline = ["echo 'login successful on master'"]
+
+    connection {
+      host = google_compute_instance.webserver.network_interface.0.access_config.0.nat_ip
+      type = "ssh"
+      user = "${var.ssh_user}"
+      private_key = "${file(var.ssh_private_key)}"
+    }
+  }
+
 }
+
 
 
 
