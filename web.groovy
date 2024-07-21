@@ -92,16 +92,14 @@ pipeline {
 
 post {
     always {
-        echo 'One way or another, I have finished'
+        echo 'Deploy web server on GCP is completed'
     }
     success {
         echo 'I succeeded!'
     }
     failure {
-        echo 'I failed :('
+        echo 'I failed!'
     }
-    changed {
-        echo 'Things were different before...'
-    }
+    
 }      
 }

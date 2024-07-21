@@ -73,9 +73,10 @@ resource "local_file" "inventory_run_ansible" {
   [webservers]
   ${google_compute_instance.webserver.name}   ansible_host=${google_compute_instance.webserver.network_interface.0.access_config.0.nat_ip}
   EOF
-
+  
+  #wait until the ssh service starts working 
   provisioner "remote-exec" {
-    inline = ["echo 'login successful on master'"]
+    inline = ["echo 'login successful on nginx webserver'"]
 
     connection {
       host = google_compute_instance.webserver.network_interface.0.access_config.0.nat_ip
