@@ -3,6 +3,10 @@ pipeline {
     triggers {
         pollSCM('* * * * *')
     }
+    environment {
+        TF_PATH = 'terraform/*'  // Путь к Terraform файлам
+        ANSIBLE_PATH = 'ansible_project/*'  // Путь к Ansible файлам
+        }
     stages {
         stage ('GIT clone') {
             agent { label 'master' }
@@ -11,24 +15,29 @@ pipeline {
             git credentialsId: 'jenkins-rsa', url: 'git@github.com:set1991/gcp_webserver.git'
            // Do a ls -lart to view all the files are cloned. It will be clonned. This is just for you to be sure about it.
             sh "ls -lart ./*"         
-        }
-        }        
-        stage ('prebuild lint tests') {
-            agent { label 'master' }
-            steps {
-                sh '''
-                echo 'Test type: syntax'
-                cd ansible_project/
-                ansible-playbook playbook.yml --syntax-check
-                ansible-lint
-                echo "Syntax check is complete"
-                //linter test
-                '''
             }
         }
+     /*   
+        stage('Check Changes') {
+            steps {
+                // Проверяем, какие файлы были изменены
+                script {
+                    def gitChanges = sh(script: "git diff HEAD HEAD~", returnStdout: true).trim()
+                    if (gitChanges.contains(env.TF_PATH)) {
+                        env.RUN_TERRAFORM = 'true'
+                    }
+                    if (gitChanges.contains(env.ANSIBLE_PATH)) {
+                        env.RUN_ANSIBLE = 'true'
+                    }
+                }
+            }
+        }*/
         //building external LB infrastructure on GCP with terraform
         stage ('build IaC') {
             agent { label 'master' }
+           /* when {
+                expression { env.RUN_TERRAFORM == 'true' }
+            }*/
             steps {
                 echo 'Building infrastructure'
                 sh '''
@@ -38,8 +47,26 @@ pipeline {
                 '''
             }
         }
+        
+        stage ('prebuild lint tests') {
+            agent { label 'master' }
+           /* when {
+                expression { env.RUN_ANSIBLE == 'true' }
+            }*/
+            steps {
+                echo 'Test type: syntax'
+                sh '''
+                cd ansible_project/
+                ansible-playbook playbook.yml --syntax-check
+                echo "Syntax check is complete"
+                '''
+            }
+        }
         stage('Ansible Run') {
             agent { label 'master' }
+          /*  when {
+                expression { env.RUN_ANSIBLE == 'true' }
+            }*/
             steps {
                 
                 sh '''
