@@ -2,7 +2,7 @@
 server {
         listen 80 default_server; #hello
         listen [::]:80 default_server;
-        root /var/www/html;
+        root /var/www/tms-by;
         index index.html index.htm index.nginx-debian.html;
         server_name _;
         location / {

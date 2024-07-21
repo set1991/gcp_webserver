@@ -12,26 +12,25 @@
       apt:
         name: nginx
         state: latest
-   
-    
+
     - name: Copy file with owner and permission, using symbolic representation
       ansible.builtin.copy:
         src: ./default
         dest: /etc/nginx/sites-available/default
     
-    # - name: Copy folder with website to web server
-    #   copy:
-    #     src: ./html
-    #     dest: /var/www/html
-    #     checksum: yes
-    - name:  Copy website from git
-      shell: 
-        cmd: |
-          cd /var/www/
-          rm -r html/   
-          git clone https://github.com/set1991/html.git
-          
-
+    - name: Copy archive with website to web server
+      copy:
+        src: ./tmsby.tar.gz
+        dest: /tmp/tmsby.tar.gz
+        
+    - name: Unarchive website in /var/www/tms-by
+      unarchive:
+        src: /tmp/tmsby.tar.gz
+        dest: /var/www
+        remote_src: yes
+        owner: root
+        group: root
+        mode: '0755'
 
     - name: Restart nginx service
       service:

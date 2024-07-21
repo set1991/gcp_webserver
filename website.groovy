@@ -2,19 +2,27 @@
 
 pipeline {
     agent { label 'master' }
+    triggers {
+        pollSCM('* * * * *')
+    }
+
+    environment {
+        TF_PATH = 'terraform/*'  // folder for  Terraform files
+        ANSIBLE_PATH = 'ansible_project/*'  // folder for  Ansible files
+    }
+    
     stages {
         stage ('GIT clone') {
             agent { label 'master' }
             steps {
-           // The below will clone your repo and will be checked out to master branch by default.
-           git credentialsId: 'jenkins-rsa', url: 'git@github.com:set1991/k8s-cluster.git'
-           // Do a ls -lart to view all the files are cloned. It will be clonned. This is just for you to be sure about it.
-           sh "ls -lart ./*" 
-           // List all branches in your repo. 
-           sh "git branch -a"
-        
-       }
-        }        
+            git credentialsId: 'jenkins-rsa', url: 'git@github.com:set1991/gcp_webserver.git'
+            // Do a ls -lart to view all the files are cloned. It will be clonned. This is just for you to be sure about it.
+            sh "ls -lart ./*" 
+        }
+}        
+
+
+
 
         //building external LB infrastructure on GCP with terraform
         stage ('build IaC') {
