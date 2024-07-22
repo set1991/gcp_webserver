@@ -3,10 +3,10 @@ pipeline {
     triggers {
         pollSCM('* * * * *')
     }
-    environment {
+    /*environment {
         TF_PATH = 'terraform/*'  // Путь к Terraform файлам
         ANSIBLE_PATH = 'ansible_project/*'  // Путь к Ansible файлам
-        }
+        }*/
     stages {
        /* stage ('GIT clone') {
             agent { label 'master' }
@@ -22,7 +22,7 @@ pipeline {
             steps {
                 // Проверяем, какие файлы были изменены
                 script {
-                    def gitChanges = sh(script: "git diff HEAD HEAD~", returnStdout: true).trim()
+                    def gitChanges = sh(script: "git diff HEAD HEAD~  --name-only", returnStdout: true).trim()
                     if (gitChanges.contains(env.TF_PATH)) {
                         env.RUN_TERRAFORM = 'true'
                     }
@@ -35,9 +35,9 @@ pipeline {
         //building external LB infrastructure on GCP with terraform
         stage ('build IaC') {
             agent { label 'master' }
-            when {
+            /*when {
                 expression { env.RUN_TERRAFORM == 'true' }
-            }
+            }*/
             steps {
                 echo 'Building infrastructure'
                 sh '''
@@ -50,9 +50,9 @@ pipeline {
         
         stage ('prebuild lint tests') {
             agent { label 'master' }
-            when {
+            /*when {
                 expression { env.RUN_ANSIBLE == 'true' }
-            }
+            }*/
             steps {
                 echo 'Test type: syntax'
                 sh '''
@@ -64,9 +64,9 @@ pipeline {
         }
         stage('Ansible Run') {
             agent { label 'master' }
-            when {
+            /*when {
                 expression { env.RUN_ANSIBLE == 'true' }
-            }
+            }*/
             steps {
                 
                 sh '''
