@@ -1,10 +1,10 @@
 module "network" {
-source = "./modules/network"
-gcp_project = var.gcp_project
-gcp_region = var.gcp_region
-name = var.name
-tags_firewall = var.tags_firewall
-ip_subnetwork = var.ip_subnetwork
+    source = "./modules/network"
+    gcp_project = var.gcp_project
+    gcp_region = var.gcp_region
+    name = var.name
+    tags_firewall = var.tags_firewall
+    ip_subnetwork = var.ip_subnetwork
 }
 module "webserver" {
     source = "./modules/webserver"
