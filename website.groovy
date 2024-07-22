@@ -27,6 +27,9 @@ pipeline {
         //building external LB infrastructure on GCP with terraform
         stage ('build IaC') {
             agent { label 'master' }
+            when {
+                expression { env.RUN_TERRAFORM == 'true' }
+            }
             steps {
                 echo 'Building infrastructure'
                 sh '''
@@ -38,6 +41,9 @@ pipeline {
         }
         stage('Ansible Run') {
             agent { label 'master' }
+            when {
+                expression { env.RUN_ANSIBLE == 'true' }
+            }
             steps {
                 
                 sh '''

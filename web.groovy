@@ -3,12 +3,12 @@ pipeline {
     triggers {
         pollSCM('* * * * *')
     }
-   /* environment {
+    environment {
         TF_PATH = 'terraform/*'  // Путь к Terraform файлам
         ANSIBLE_PATH = 'ansible_project/*'  // Путь к Ansible файлам
-        }*/
+        }
     stages {
-        stage ('GIT clone') {
+       /* stage ('GIT clone') {
             agent { label 'master' }
             steps {
            // The below will clone your repo and will be checked out to master branch by default.
@@ -16,8 +16,8 @@ pipeline {
            // Do a ls -lart to view all the files are cloned. It will be clonned. This is just for you to be sure about it.
             sh "ls -lart ./*"         
             }
-        }
-     /*   
+        }*/
+       
         stage('Check Changes') {
             steps {
                 // Проверяем, какие файлы были изменены
@@ -31,13 +31,13 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
         //building external LB infrastructure on GCP with terraform
         stage ('build IaC') {
             agent { label 'master' }
-           /* when {
+            when {
                 expression { env.RUN_TERRAFORM == 'true' }
-            }*/
+            }
             steps {
                 echo 'Building infrastructure'
                 sh '''
@@ -50,9 +50,9 @@ pipeline {
         
         stage ('prebuild lint tests') {
             agent { label 'master' }
-           /* when {
+            when {
                 expression { env.RUN_ANSIBLE == 'true' }
-            }*/
+            }
             steps {
                 echo 'Test type: syntax'
                 sh '''
@@ -64,9 +64,9 @@ pipeline {
         }
         stage('Ansible Run') {
             agent { label 'master' }
-          /*  when {
+            when {
                 expression { env.RUN_ANSIBLE == 'true' }
-            }*/
+            }
             steps {
                 
                 sh '''
