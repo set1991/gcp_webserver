@@ -18,7 +18,7 @@ pipeline {
             }
         }*/
        
-        stage('Check Changes') {
+       /* stage('Check Changes') {
             steps {
                 // Проверяем, какие файлы были изменены
                 script {
@@ -31,7 +31,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
         //building external LB infrastructure on GCP with terraform
         stage ('build IaC') {
             agent { label 'master' }
