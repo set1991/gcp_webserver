@@ -79,7 +79,6 @@ pipeline {
         }
 
     }
-
 post {
     always {
         echo 'Deploy web server on GCP is completed'
