@@ -1,4 +1,4 @@
-#CREATE A NEW VPS NETWORK 
+#CREATE A NEW VPС NETWORK 
 resource "google_compute_network" "network" {
   project                 = var.gcp_project
   name                    = "${var.name}-network"
