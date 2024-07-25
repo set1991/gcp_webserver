@@ -3,32 +3,9 @@ pipeline {
     triggers {
         pollSCM('* * * * *')
     }
-    /*environment {
-        TF_PATH = 'terraform/*'  // Путь к Terraform файлам
-        ANSIBLE_PATH = 'ansible_project/*'  // Путь к Ansible файлам
-        }*/
     stages {
-       
-       /* stage('Check Changes') {
-            steps {
-                // Проверяем, какие файлы были изменены
-                script {
-                    def gitChanges = sh(script: "git diff HEAD HEAD~  --name-only", returnStdout: true).trim()
-                    if (gitChanges.contains(env.TF_PATH)) {
-                        env.RUN_TERRAFORM = 'true'
-                    }
-                    if (gitChanges.contains(env.ANSIBLE_PATH)) {
-                        env.RUN_ANSIBLE = 'true'
-                    }
-                }
-            }
-        }*/
-        //building external LB infrastructure on GCP with terraform
         stage ('build IaC') {
             agent { label 'master' }
-            /*when {
-                expression { env.RUN_TERRAFORM == 'true' }
-            }*/
             steps {
                 echo 'Building infrastructure'
                 sh '''
@@ -38,12 +15,8 @@ pipeline {
                 '''
             }
         }
-        
         stage ('prebuild lint tests') {
             agent { label 'master' }
-            /*when {
-                expression { env.RUN_ANSIBLE == 'true' }
-            }*/
             steps {
                 echo 'Test type: syntax'
                 sh '''
@@ -55,16 +28,12 @@ pipeline {
         }
         stage('Ansible Run') {
             agent { label 'master' }
-            /*when {
-                expression { env.RUN_ANSIBLE == 'true' }
-            }*/
             steps {
                 
                 sh '''
                 cd ansible_project/
                 ansible-playbook  playbook.yml
                 '''
-                
             }
         }
         stage('Website accessibility test') {

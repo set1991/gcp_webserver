@@ -1,5 +1,5 @@
 ---
-- name: Install packets to master node
+- name: Install packets to webserver
   hosts: all
   become: yes
   tasks:
@@ -13,7 +13,7 @@
         name: nginx
         state: latest
 
-    - name: Copy file with owner and permission, using symbolic representation
+    - name: Copy configuration file to nginx config
       ansible.builtin.copy:
         src: ./default
         dest: /etc/nginx/sites-available/default
@@ -38,8 +38,3 @@
         state: restarted
         enabled: yes
                
-###
-#
-#
-#
-#
