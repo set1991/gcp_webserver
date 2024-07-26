@@ -12,7 +12,7 @@ pipeline {
                 cd terraform/
                 terraform init
                 terraform apply -auto-approve
-                '''
+                ''' 
             }
         }
         stage ('prebuild lint tests') {
