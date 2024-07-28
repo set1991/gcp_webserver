@@ -6,12 +6,41 @@ resource "google_compute_instance" "webserver" {
   project = var.gcp_project
   zone = var.gcp_zone    
   # We're tagging the instance with the tag specified in the firewall rule from NETWORK MODULE
-  tags = [var.tags_firewall["http"], var.tags_firewall["ssh"]]
+  tags = [var.tags_firewall["http"], var.tags_firewall["ssh"], var.tags_firewall["prometheus"]]
   boot_disk {
     initialize_params {
       image = "ubuntu-2204-jammy-v20240614"
     }
   }  
+  metadata_startup_script = <<-EOT
+  wget https://github.com/prometheus/node_exporter/releases/download/v1.8.1/node_exporter-1.8.1.linux-amd64.tar.gz
+  tar -xvf node_exporter-1.8.1.linux-amd64.tar.gz
+  sudo cp node_exporter-1.8.1.linux-amd64/node_exporter /usr/local/bin/
+  sudo useradd -rs /bin/false nodeusr
+  sudo chown nodeusr:nodeusr /usr/local/bin/node_exporter
+  sudo bash -c 'cat << EOF > /etc/systemd/system/node_exporter.service
+  [Unit]
+  Description=Node Exporter
+  Wants=network-online.target
+  After=network-online.target
+
+  [Service]
+  User=nodeusr
+  Group=nodeusr
+  Type=simple
+  ExecStart=/usr/local/bin/node_exporter
+
+  [Install]
+  WantedBy=multi-user.target
+  EOF'
+
+  #start node_exporter service
+  sudo systemctl daemon-reload
+  sudo systemctl start node_exporter
+  sudo systemctl enable node_exporter
+  sudo systemctl status node_exporter
+    
+  EOT
   metadata = {
     ssh-keys = "${var.ssh_user}:${file(var.ssh_pub_key)}"
   }

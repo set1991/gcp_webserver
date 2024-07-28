@@ -37,6 +37,8 @@ variable "tags_firewall" {
   default = {
     http = "http-server"
     ssh = "ssh-server" 
+    grafana = "grafana"
+    prometheus = "prometheus"
   }
 }
 variable "ssh_user" {
