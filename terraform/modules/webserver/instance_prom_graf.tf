@@ -118,4 +118,3 @@ resource "google_compute_instance" "grafana" {
   EOT
   depends_on = [ local_file.config_grafana ]  
 }
-
