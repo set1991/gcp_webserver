@@ -10,7 +10,7 @@ scrape_configs:
   - job_name: "prometheus"
     static_configs:
       - targets: ["localhost:9090"]
-  - job_name: "k8s nodes"
+  - job_name: "webserver"
     static_configs:
       - targets:
         - ${google_compute_instance.webserver.network_interface.0.network_ip}:9100
