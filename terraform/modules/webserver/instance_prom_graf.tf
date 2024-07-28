@@ -1,4 +1,3 @@
-
 #Create configuration file for prometheus
 resource "local_file" "config_prometheus" {
  filename = "./prometheus.yml"
@@ -39,15 +38,11 @@ resource "google_compute_instance" "prometheus" {
         network = var.network
         subnetwork = var.subnetwork
        access_config {
-      // Ephemeral public IP
       }
-     
     }
-  
   provisioner "file" {
     source = "./prometheus.yml"
     destination = "/tmp/prometheus.yml"
-
     connection {
       host = google_compute_instance.prometheus.network_interface.0.access_config.0.nat_ip
       type = "ssh"
@@ -55,7 +50,6 @@ resource "google_compute_instance" "prometheus" {
       private_key = "${file(var.ssh_private_key)}"
     }
 }
-
     metadata_startup_script = <<-EOT
     #!/bin/bash
     sudo apt-get update
@@ -67,9 +61,8 @@ resource "google_compute_instance" "prometheus" {
     sudo docker run -d --name prometheus -p 9090:9090 -v /tmp/prometheus.yml:/etc/prometheus/prometheus.yml  prom/prometheus
   EOT
   depends_on = [ local_file.config_prometheus ]
- #-v /tmp/prometheus.yml:/etc/prometheus/prometheus.yml 
 }
-
+#Create configuration file for grafana
 resource "local_file" "config_grafana" {
  filename = "./grafana.yml"
  content = <<EOF
@@ -81,20 +74,14 @@ datasources:
 EOF
 }
 
-
-
 #CREATE grafana instance
 resource "google_compute_instance" "grafana" {
     name = "${var.name}-grafana"
     machine_type = "e2-small"
     project = var.gcp_project
     zone = var.gcp_zone
-   
      # We're tagging the instance with the tag specified in the firewall rule from NETWORK MODULE
     tags = [var.tags_firewall["http"], var.tags_firewall["grafana"], var.tags_firewall["ssh"]]
-    
-    
-  
     boot_disk {
       initialize_params {
         image = "ubuntu-2204-jammy-v20240614"
@@ -107,14 +94,11 @@ resource "google_compute_instance" "grafana" {
         network = var.network
         subnetwork = var.subnetwork
         access_config {
-      // Ephemeral public IP
       }
-      
     }
     provisioner "file" {
     source = "./grafana.yml"
     destination = "/tmp/grafana.yml"
-
     connection {
       host = google_compute_instance.grafana.network_interface.0.access_config.0.nat_ip
       type = "ssh"
@@ -122,7 +106,6 @@ resource "google_compute_instance" "grafana" {
       private_key = "${file(var.ssh_private_key)}"
     }
 }
-
     metadata_startup_script = <<-EOT
     #!/bin/bash
     sudo apt-get update
@@ -133,8 +116,6 @@ resource "google_compute_instance" "grafana" {
     # Run Prometheus container
     sudo docker run -d --name grafana -p 3000:3000 -v /tmp/grafana.yml:/etc/grafana/provisioning/datasources/prometheus.yaml  grafana/grafana
   EOT
-  depends_on = [ local_file.config_grafana ]
-    
-    
+  depends_on = [ local_file.config_grafana ]  
 }
 
