@@ -4,4 +4,4 @@ terraform {
    credentials = "/home/set/keys/new-mygcp-cred.json"
    prefix = "webserver/state"
 }
-}
+} 
