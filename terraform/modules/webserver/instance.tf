@@ -2,7 +2,7 @@
 #CREATE compute instance for nginx
 resource "google_compute_instance" "webserver" {
   name = "${var.name}"
-  machine_type = "e2-small"
+  machine_type = "e2-medium"
   project = var.gcp_project
   zone = var.gcp_zone    
   # We're tagging the instance with the tag specified in the firewall rule from NETWORK MODULE
