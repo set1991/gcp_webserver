@@ -81,7 +81,7 @@ resource "local_file" "inventory_run_ansible" {
       user = "${var.ssh_user}"
       private_key = "${file(var.ssh_private_key)}"
     }
-  }
+  } 
 }
 
 
