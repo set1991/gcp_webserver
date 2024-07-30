@@ -83,7 +83,7 @@ resource "local_file" "inventory_run_ansible" {
     }
   }
 
-} 
+}
 
 
 
